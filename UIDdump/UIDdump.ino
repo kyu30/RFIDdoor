@@ -1,4 +1,4 @@
-/*
+/* This kinda isn't related to the program, it's just explaining the library (came in the template I used)
  * --------------------------------------------------------------------------------------------------------------------
  * Example sketch/program showing how to read data from a PICC to serial.
  * --------------------------------------------------------------------------------------------------------------------
@@ -34,10 +34,11 @@
  *
  * More pin layouts for other boards can be found here: https://github.com/miguelbalboa/rfid#pin-layout
  */
-
+// imported libraries to use for the program
 #include <SPI.h>
 #include <MFRC522.h>
 
+// Set which pins on the Arduino board the RFID scanner is connected to 
 #define RST_PIN         9          // Configurable, see typical pin layout above
 #define SS_PIN          10         // Configurable, see typical pin layout above
 
@@ -48,42 +49,43 @@ void setup() {
 	while (!Serial);		// Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
 	SPI.begin();			// Init SPI bus
 	mfrc522.PCD_Init();		// Init MFRC522
-  pinMode(5, OUTPUT);
+  pinMode(5, OUTPUT); // I used Pins 5 and 6 for the LED lights that I made to respond to the cards
   pinMode(6, OUTPUT);
 	delay(4);				// Optional delay. Some board do need more time after init to be ready, see Readme
 }
 
 void loop() {
 	// Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
-	if ( ! mfrc522.PICC_IsNewCardPresent()) {
+	if ( ! mfrc522.PICC_IsNewCardPresent()) { // Checks if a card is being scanned
 		return;
 	}
 
 	// Select one of the cards
-	if ( ! mfrc522.PICC_ReadCardSerial()) {
+	if ( ! mfrc522.PICC_ReadCardSerial()) { //Reads the card
 		return;
 	}
 
 	// Dump debug info about the card; PICC_HaltA() is automatically called
 	Serial.print("UID: ");
-  for (byte i = 0; i < mfrc522.uid.size; i++){
+  for (byte i = 0; i < mfrc522.uid.size; i++){ //Loops through the bytes to collect the parts of the card's UID
     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
     Serial.print(mfrc522.uid.uidByte[i], HEX);
   }
-  Serial.println();
+  Serial.println(); // Sends the UID to the serial monitor as a string, we use the serial monitor to communicate with the python script
   delay(1000);
   mfrc522.PICC_HaltA();
 
-  if(Serial.available() > 0){
+  if(Serial.available() > 0){ //Waits for a response from the python script through the serial monitor
     String command = Serial.readStringUntil('\n');
     command.trim();
-    if (command == "ACCESS GRANTED"){
+    if (command == "ACCESS GRANTED"){ //If the Python script sends the ACCESS GRANTED message, the green light turns on 
       digitalWrite(6, HIGH);
       digitalWrite(5, LOW);
     }
-    else if (command == "ACCESS DENIED"){
+    else if (command == "ACCESS DENIED"){ //If the Python script sends the ACCESS DENIED message, the red light turns on 
       digitalWrite(6, LOW);
       digitalWrite(5, HIGH);
     }
   }
 }
+//Wiring diagram not included because I don't actually know how to make one
