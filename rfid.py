@@ -49,9 +49,9 @@ def card_check(df): #use to control access
                             ser.write(b"ACCESS DENIED\n")
             except serial.SerialException as e:
                 break  # Exit the loop and try to reinitialize the serial connection
-            except Exception as e:
+            '''except Exception as e:
                 print(f"Unexpected error: {e}")
-                ser.close()
+                ser.close()'''
     except KeyboardInterrupt: #You can exit the program with ctrl+C
         print("Exiting Program")
     ser.close()
@@ -73,12 +73,12 @@ def add_update(df): #Use for adding cards
                                 update = input("Name or Permission").upper() #If user types 'y', they're prompted to choose between updating the name or permission associated with the card
                                 if update == "NAME":
                                     df.loc[id, 'User'] = input("New name? ") #If user picks name, they're prompted to type in the new name to be associated with the card
-                                    print(df[id]) #Prints updated data for the card
+                                    print(df.loc[id]) #Prints updated data for the card
                                     df.to_csv('whitelist.csv') #Adds updated data to the whitelist csv
                                     ser.close()
                                 elif update == "PERMISSION":
                                     df.loc[id, 'Permission'] = input("New permissions? ") #If user picks permission, they're prompted to type in the new permission to be associated with the card
-                                    print(df[id])
+                                    print(df.loc[id])
                                     df.to_csv('whitelist.csv')
                                     ser.close()
                                 else: 
@@ -102,9 +102,9 @@ def add_update(df): #Use for adding cards
                                 break #Ends program if the user doesn't want to add the card
             except serial.SerialException as e:
                 break  # Exit the loop and try to reinitialize the serial connection
-            except Exception as e:
+            '''except Exception as e:
                 print(f"Unexpected error: {e}")
-                ser.close()
+                ser.close()'''
     except KeyboardInterrupt:
         print("Exiting Program")
         ser.close()
