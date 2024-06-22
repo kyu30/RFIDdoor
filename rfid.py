@@ -19,7 +19,7 @@ df = df.set_index("UID")
 
 def card_check(df): #use to control access
     print("Tap Card")
-    ser = serial.Serial('COM4', 9600) #Links to the arduino program's Serial Monitor (info recorded by the Arduino)
+    ser = serial.Serial('COM6', 9600) #Links to the arduino program's Serial Monitor (info recorded by the Arduino)
     #time.sleep(2)
     try:
         while True:
@@ -47,18 +47,19 @@ def card_check(df): #use to control access
                             ser.write(b"ACCESS GRANTED\n") #Tells Arduino to let cardholder if the card isn't expired and is in the dataframe
                         else:
                             ser.write(b"ACCESS DENIED\n")
+                        break
             except serial.SerialException as e:
                 break  # Exit the loop and try to reinitialize the serial connection
-            '''except Exception as e:
+            except Exception as e:
                 print(f"Unexpected error: {e}")
-                ser.close()'''
+                ser.close()
     except KeyboardInterrupt: #You can exit the program with ctrl+C
         print("Exiting Program")
     ser.close()
 
 def add_update(df): #Use for adding cards
     print("Tap card")
-    ser = serial.Serial('COM4', 9600)
+    ser = serial.Serial('COM6', 9600)
     try:
         while True:
             try:
@@ -68,9 +69,10 @@ def add_update(df): #Use for adding cards
                         id = str(line.split(": ")[1]).strip().upper() # Same as in the other function
                         if id in df.index:
                             print("Card already in system")
+                            print(df.loc[id])
                             answer = input("Update card? (y/n) ") #If the card is already in the dataframe, the user is prompted to choose to update the card or not
                             if answer.lower() == 'y':
-                                update = input("Name or Permission").upper() #If user types 'y', they're prompted to choose between updating the name or permission associated with the card
+                                update = input("Name or Permission ").upper() #If user types 'y', they're prompted to choose between updating the name or permission associated with the card
                                 if update == "NAME":
                                     df.loc[id, 'User'] = input("New name? ") #If user picks name, they're prompted to type in the new name to be associated with the card
                                     print(df.loc[id]) #Prints updated data for the card
@@ -95,6 +97,7 @@ def add_update(df): #Use for adding cards
                                 df.loc[id, 'Permission'] = input("Permissions? ")
                                 df.loc[id, 'LastUsed'] = dt.now() #LastUsed is added automatically
                                 print("User " + df.loc[id, 'User'] + " added") #Confirmation message
+                                print(df.loc[id])
                                 df.to_csv('whitelist.csv')
                                 ser.close()
                             elif answer.lower() == 'n':
@@ -102,9 +105,9 @@ def add_update(df): #Use for adding cards
                                 break #Ends program if the user doesn't want to add the card
             except serial.SerialException as e:
                 break  # Exit the loop and try to reinitialize the serial connection
-            '''except Exception as e:
+            except Exception as e:
                 print(f"Unexpected error: {e}")
-                ser.close()'''
+                ser.close()
     except KeyboardInterrupt:
         print("Exiting Program")
         ser.close()
