@@ -8,14 +8,14 @@ from datetime import time, date, timedelta
 
 #Sets up example csv containing information from one card
 data2 = {
-    "Card ID": ["84 B8 C8 72"],
+    "UID": ["84 B8 C8 72"],
     "Permission": ['Owner'],
     "User": ["Owner1"],
-    "Last Used": [dt.now()-timedelta(days=20)] #Used this to test last used range for card
+    "LastUsed": [dt.now()-timedelta(days=20)] #Used this to test LastUsed range for card
 }
 
 df = pd.DataFrame(data2) #Creates a dataframe using the example csv
-df = df.set_index("Card ID")
+df = df.set_index("UID")
 
 def card_check(df): #use to control access
     print("Tap Card")
@@ -31,11 +31,11 @@ def card_check(df): #use to control access
                         if id in df.index: #Runs below code if the UID is in the given dataframe
                             in_df = True #This variable stores whether or not the UID is in the dataframe or not (True/False)
                             user_info = df.loc[id] #Stores all the information associated with the UID in the user_info variable
-                            if (dt.now() - df.loc[id, 'Last Used']).days > 30: #Checks if the last time the card was used was within a month ago
+                            if (dt.now() - df.loc[id, 'LastUsed']).days > 30: #Checks if the last time the card was used was within a month ago
                                 print("Card expired") #Card is expired if the last time the card was used was more than a month (30 days) ago
                                 time = False #This variable stores whether or not the card expired
                             else:
-                                df.loc[id, "Last Used"] = dt.now() #Sets the new Last Used to now, saves all new information/overwrites existing
+                                df.loc[id, "LastUsed"] = dt.now() #Sets the new LastUsed to now, saves all new information/overwrites existing
                                                                     #info into a csv/spreadsheet
                                 df.to_csv('whitelist.csv')
                                 print(user_info.to_string() + "\nCard recognized, access granted") #Writes message to user
@@ -93,7 +93,7 @@ def add_update(df): #Use for adding cards
                             if answer.lower() == 'y': #If the user picks 'y', the user is prompted to add name and permission
                                 df.loc[id, 'User'] = input("Name? ")
                                 df.loc[id, 'Permission'] = input("Permissions? ")
-                                df.loc[id, 'Last Used'] = dt.now() #Last used is added automatically
+                                df.loc[id, 'LastUsed'] = dt.now() #LastUsed is added automatically
                                 print("User " + df.loc[id, 'User'] + " added") #Confirmation message
                                 df.to_csv('whitelist.csv')
                                 ser.close()
