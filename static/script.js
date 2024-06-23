@@ -6,8 +6,8 @@ document.getElementById('addForm').addEventListener('submit', function(event){
     event.preventDefault();
     const uid = document.getElementById('uid').value;
     const name = document.getElementById('name').value;
-    const access = document.getElementById('access').value;
-    addEntry(uid, name, accessLevel)
+    const permissions = document.getElementById('permissions').value;
+    addEntry(uid, name, permissions)
 })
 
 function fetchWhitelist(){
@@ -28,23 +28,28 @@ function fetchWhitelist(){
                 `;
                 whitelist.appendChild(row);
         });
-    });
+    }).catch(error => console.error('Error fetching whitelist: ', error));
 }
 
-function addEntry(uid, name, access){
+function addEntry(uid, name, permissions){
+    console.log('Adding entry:', { uid, name, permissions });
     fetch('/add_entry', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ uid, name, accessLevel })
+        body: JSON.stringify({ uid, name, permissions })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Add entry response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Add entry response:', data);
         if(data.status === 'success'){
             fetchWhitelist();
         } else{
-            alert ('Failed to add entry');
+            alert (`Failed to add entry: ${data.message}`);
         }
     });
 }
