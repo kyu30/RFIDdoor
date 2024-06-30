@@ -51,6 +51,7 @@ void setup() {
 	mfrc522.PCD_Init();		// Init MFRC522
   pinMode(5, OUTPUT); // I used Pins 5 and 6 for the LED lights that I made to respond to the cards
   pinMode(6, OUTPUT);
+  pinMode(A5, OUTPUT);
 	delay(4);				// Optional delay. Some board do need more time after init to be ready, see Readme
 }
 
@@ -79,12 +80,13 @@ void loop() {
     String command = Serial.readStringUntil('\n');
     command.trim();
     if (command == "ACCESS GRANTED"){ //If the Python script sends the ACCESS GRANTED message, the green light turns on 
-      digitalWrite(6, HIGH);
-      digitalWrite(5, LOW);
+      digitalWrite(A5, HIGH);
+      delay(5000);
+      digitalWrite(A5, LOW);
     }
     else if (command == "ACCESS DENIED"){ //If the Python script sends the ACCESS DENIED message, the red light turns on 
-      digitalWrite(6, LOW);
-      digitalWrite(5, HIGH);
+      digitalWrite(5, LOW);
+      delay(5000)
     }
   }
 }

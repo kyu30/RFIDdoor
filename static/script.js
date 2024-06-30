@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', function(){
     fetchWhitelist();
+    document.getElementById('addForm').addEventListener('submit', function(event){
+        event.preventDefault();
+        console.log("form submitted");
+        const uid = document.getElementById('uid').value;
+        const name = document.getElementById('name').value;
+        const permissions = document.getElementById('permission').value;
+        addEntry(uid, name, permissions);
+    });
 });
-
-document.getElementById('addForm').addEventListener('submit', function(event){
-    event.preventDefault();
-    const uid = document.getElementById('uid').value;
-    const name = document.getElementById('name').value;
-    const permissions = document.getElementById('permissions').value;
-    addEntry(uid, name, permissions)
-})
 
 function fetchWhitelist(){
     fetch('/get_whitelist')
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        console.log("whitelist received");
         const whitelist = document.getElementById('whitelist');
         whitelist.innerHTML = '';
         data.forEach(entry => {
@@ -51,7 +51,8 @@ function addEntry(uid, name, permissions){
         } else{
             alert (`Failed to add entry: ${data.message}`);
         }
-    });
+    })
+    .catch(error => console.error('Error adding entry:', error));
 }
 
 function deleteEntry(uid){

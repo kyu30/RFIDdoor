@@ -59,7 +59,7 @@ def card_check(df): #use to control access
 
 def add_update(df): #Use for adding cards
     print("Tap card")
-    ser = serial.Serial('COM6', 9600)
+    ser = serial.Serial('COM4', 9600)
     try:
         while True:
             try:
@@ -115,6 +115,6 @@ def add_update(df): #Use for adding cards
 
 
 #Used these to call functions and test them
-card_check(df)
-#add_update(df)
+#card_check(df)
+add_update(df)
 #df.to_csv('whitelist.csv')

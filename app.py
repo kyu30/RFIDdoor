@@ -28,15 +28,16 @@ def add_entry():
         logging.debug(f"Received data for add_entry: {data}")
         if not data:
             logging.debug(f"Received data for add_entry: {data}")
-        uid = data.get("UID", '').strip().upper()
-        name = data.get("User", '').strip()
-        access = data.get("Permission", '').strip()
+        uid = data.get("uid", '').strip().upper()
+        name = data.get("name", '').strip()
+        access = data.get("permissions", '').strip()
         time = dt.now()
         if not uid or not name or not access or not time:
                 logging.error(f"Invalid data received: {data}")
                 return jsonify({'status': 'error', 'message': 'Invalid data received'}), 400
         else:
             df.loc[uid] = [name, access, time]
+            print(df)
             df.to_csv(whitelist)
             logging.debug(f"Added entry: {uid}, {name}, {access}, {time}")
             return jsonify({'status': 'success'})
@@ -54,7 +55,7 @@ def add_entry():
 @app.route('/delete_entry', methods=['POST'])
 def delete_entry():
     data = request.json
-    uid = data.get('UID', '').strip().upper()
+    uid = data.get('uid', '').strip().upper()
 
     if uid in df.index:
         df.drop(uid, inplace = True)
